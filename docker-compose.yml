@@ -1,0 +1,11 @@
+version: "3.8"
+services:
+  image-api:
+    build:
+      context: ./image-api
+    ports:
+      - 3000:3000
+    volumes:
+      - ./node_modules
+      - ./image-api:/app
+    command: yarn start:dev
