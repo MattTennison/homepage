@@ -4,11 +4,21 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
+    "axios": "^0.21.1",
+    "fp-ts": "^2.9.5",
+    "io-ts": "^2.2.15",
     "koa": "^2.13.1"
   },
   "devDependencies": {
+    "@babel/core": "^7.13.8",
+    "@babel/preset-env": "^7.13.9",
+    "@babel/preset-typescript": "^7.13.0",
+    "@types/jest": "^26.0.20",
     "@types/koa": "^2.13.1",
     "@types/node": "^14.14.32",
+    "babel-jest": "^26.6.3",
+    "jest": "^26.6.3",
+    "nock": "^13.0.10",
     "nodemon": "^2.0.7",
     "ts-node": "^9.1.1",
     "typescript": "^4.2.3"
@@ -16,6 +26,8 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/app.js",
-    "start:dev": "nodemon --config nodemon.json src/app.ts"
+    "start:dev": "nodemon --config nodemon.json src/app.ts",
+    "test": "jest",
+    "test:watch": "jest --watch"
   }
 }
