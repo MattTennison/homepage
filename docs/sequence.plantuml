@@ -1,0 +1,32 @@
+@startuml Theme Picking
+
+actor "User" as user
+participant "React Frontend" as frontend
+participant "Image API" as imageapi
+participant "Pexels API" as pexels
+participant "GCP Vision API" as gcpvision
+
+user -> frontend : Request /new-tab page
+user <- frontend : Return pre-rended /new-tab page
+
+user -> imageapi : Request new "theme" (e.g. ocean)
+user <- imageapi : Open websocket connection
+imageapi -> pexels : Search for "ocean" photos
+imageapi <- pexels : Returns up to 15 "ocean" photos
+
+loop "Per image in search response"
+    imageapi -> pexels : Requests image
+    imageapi <- pexels : Returns image contents
+    imageapi -> imageapi : Convert to Base64
+    imageapi -> gcpvision : Analyse image with SafeSearch
+    alt "Image is safe for work"
+    imageapi <- gcpvision : Return "VERY_UNLIKELY" for adult content
+    user <- imageapi : Send photo as binary blob via websocket
+    else "Image has explicit content in it"
+    imageapi -> imageapi : Discard image
+    end
+end
+
+user <- imageapi : Close websocket once all photos sent or discarded
+
+@enduml
