@@ -20,7 +20,7 @@ const searchResponse = t.exact(
 
 const getClient = () => {
   return axios.create({
-    baseURL: "https://api.pexels.com/v1",
+    baseURL: config.pexels.apiBaseUrl,
     headers: {
       Authorization: config.pexels.apiToken,
     },

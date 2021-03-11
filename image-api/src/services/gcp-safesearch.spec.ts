@@ -1,6 +1,10 @@
-import nock from "nock";
-import successfulSafeSearchResponse from "../fixtures/gcp/safesearch.json";
-import { clone } from "../utils/clone";
+import { setupServer, SetupServerApi } from "msw/node";
+import {
+  emptyResponsesSafeSearch,
+  errorCodeSafeSearch,
+  mangledSafeSearchResponse,
+  successfulSafeSearchResponse,
+} from "../mocks/gcp/handlers";
 import { analyse } from "./gcp-safesearch";
 
 jest.mock("../config", () => ({
@@ -13,89 +17,74 @@ jest.mock("../config", () => ({
 }));
 
 describe("GCP SafeSearch Image Detection", () => {
-  beforeAll(() => {
-    nock.disableNetConnect();
-  });
-
-  afterAll(() => {
-    nock.enableNetConnect();
-  });
-
   describe("#analyse", () => {
-    let apiScope: nock.Scope;
+    let server: SetupServerApi;
 
-    const expectedRequestBody = {
-      requests: [
-        {
-          image: {
-            content: "base64-encoded-image",
+    afterEach(() => {
+      server.close();
+    });
+
+    describe("with successful API responses", () => {
+      beforeEach(() => {
+        server = setupServer(successfulSafeSearchResponse);
+        server.listen();
+      });
+
+      it("returns results from the API", async () => {
+        const result = await analyse({ imageInBase64: "base64-encoded-image" });
+
+        expect(result).toEqual({
+          safeSearch: {
+            adult: "UNLIKELY",
+            spoof: "VERY_UNLIKELY",
+            medical: "VERY_UNLIKELY",
+            violence: "LIKELY",
+            racy: "POSSIBLE",
           },
-          features: [{ type: "SAFE_SEARCH_DETECTION" }],
-        },
-      ],
-    };
-
-    beforeEach(() => {
-      apiScope = nock("https://vision.googleapis.com/v1");
-    });
-
-    it("returns results from the API", async () => {
-      apiScope
-        .post("/images:annotate", expectedRequestBody)
-        .matchHeader("Authorization", "Bearer GCP-token")
-        .reply(200, successfulSafeSearchResponse);
-
-      const result = await analyse({ imageInBase64: "base64-encoded-image" });
-
-      expect(result).toEqual({
-        safeSearch: {
-          adult: "UNLIKELY",
-          spoof: "VERY_UNLIKELY",
-          medical: "VERY_UNLIKELY",
-          violence: "LIKELY",
-          racy: "POSSIBLE",
-        },
+        });
       });
     });
 
-    describe("error handling", () => {
-      it("throws an error if the API returns malformed data", () => {
-        apiScope
-          .post("/images:annotate", expectedRequestBody)
-          .reply(200, { mangledData: "foo" });
+    describe("with mangled API responses", () => {
+      beforeEach(() => {
+        server = setupServer(mangledSafeSearchResponse);
+        server.listen();
+      });
 
+      it("throws an error", () => {
         return expect(
           analyse({ imageInBase64: "base64-encoded-image" })
         ).rejects.toBeTruthy();
       });
+    });
 
-      it("throws an error if the API returns an empty responses array", () => {
-        const emptyResponses = {
-          ...clone(successfulSafeSearchResponse),
-          responses: [],
-        };
+    describe.each([201, 401, 500])(
+      "with a %s response from the API",
+      (statusCode) => {
+        beforeEach(() => {
+          server = setupServer(errorCodeSafeSearch(statusCode));
+          server.listen();
+        });
 
-        apiScope
-          .post("/images:annotate", expectedRequestBody)
-          .reply(200, emptyResponses);
-
-        return expect(
-          analyse({ imageInBase64: "base64-encoded-image" })
-        ).rejects.toBeTruthy();
-      });
-
-      it.each([201, 400, 500])(
-        "throws an error if the API returns %s status code",
-        (statusCode) => {
-          apiScope
-            .post("/images:annotate", expectedRequestBody)
-            .reply(statusCode);
-
+        it("throws an error", () => {
           return expect(
             analyse({ imageInBase64: "base64-encoded-image" })
           ).rejects.toBeTruthy();
-        }
-      );
+        });
+      }
+    );
+
+    describe("with empty responses array", () => {
+      beforeEach(() => {
+        server = setupServer(emptyResponsesSafeSearch);
+        server.listen();
+      });
+
+      it("throws an error", () => {
+        return expect(
+          analyse({ imageInBase64: "base64-encoded-image" })
+        ).rejects.toBeTruthy();
+      });
     });
   });
 });

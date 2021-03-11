@@ -1,8 +1,14 @@
-import nock from "nock";
 import { fetchImageInBase64, search } from "./pexels";
-import successfulSearchResponse from "../fixtures/pexels/search.json";
 import { readFile } from "fs/promises";
 import { resolve } from "path";
+import { setupServer, SetupServerApi } from "msw/node";
+import {
+  assetResponse,
+  errorCodeSearch,
+  mangledSearch,
+  errorCodeAsset,
+  successfulSearch,
+} from "../mocks/pexels/handlers";
 
 jest.mock("../config", () => ({
   config: {
@@ -10,104 +16,131 @@ jest.mock("../config", () => ({
     pexels: {
       apiToken: "pexels-api-token",
       maxImageSizeInBytes: 10 * 1024,
+      apiBaseUrl: "https://api.pexels.com/v1",
     },
   },
 }));
 
 describe("Pexels", () => {
-  beforeAll(() => {
-    nock.disableNetConnect();
-  });
-
-  afterAll(() => {
-    nock.enableNetConnect();
-  });
+  let server: SetupServerApi;
 
   describe("#search", () => {
-    let apiScope: nock.Scope;
+    describe("with successful API responses", () => {
+      beforeEach(() => {
+        server = setupServer(successfulSearch);
+        server.listen();
+      });
 
-    beforeEach(() => {
-      apiScope = nock("https://api.pexels.com/v1");
-    });
+      afterEach(() => {
+        server.close();
+      });
 
-    it("returns results from the API", async () => {
-      apiScope
-        .get("/search?query=ocean")
-        .matchHeader("Authorization", "pexels-api-token")
-        .reply(200, successfulSearchResponse);
+      it("returns results from the API", async () => {
+        const result = await search({ query: "ocean" });
 
-      const result = await search({ query: "ocean" });
-
-      expect(result.photos).toHaveLength(15);
-      expect(result.photos[0]).toEqual({
-        id: 189349,
-        src: "https://images.pexels.com/photos/189349/pexels-photo-189349.jpeg",
+        expect(result.photos).toHaveLength(15);
+        expect(result.photos[0]).toEqual({
+          id: 189349,
+          src:
+            "https://images.pexels.com/photos/189349/pexels-photo-189349.jpeg",
+        });
       });
     });
 
     describe("error handling", () => {
-      it("throws an error if the API returns malformed data", () => {
-        apiScope.get("/search?query=ocean").reply(200, { mangledData: "foo" });
+      describe("with malformed API responses", () => {
+        beforeEach(() => {
+          server = setupServer(mangledSearch);
+          server.listen();
+        });
 
-        return expect(search({ query: "ocean" })).rejects.toBeTruthy();
+        afterEach(() => {
+          server.close();
+        });
+
+        it("throws an error if the API returns malformed data", () => {
+          return expect(search({ query: "ocean" })).rejects.toBeTruthy();
+        });
       });
 
-      it.each([201, 400, 500])(
-        "throws an error if the API returns %s status code",
+      describe.each([201, 400, 500])(
+        "with the API returning %s status code",
         (statusCode) => {
-          apiScope.get("/search?query=ocean").reply(statusCode);
+          beforeEach(() => {
+            server = setupServer(errorCodeSearch(statusCode));
+            server.listen();
+          });
 
-          return expect(search({ query: "ocean" })).rejects.toBeTruthy();
+          afterEach(() => {
+            server.close();
+          });
+
+          it("throws an error", () => {
+            return expect(search({ query: "ocean" })).rejects.toBeTruthy();
+          });
         }
       );
     });
   });
 
   describe("#fetchImageInBase64", () => {
-    let imageScope: nock.Scope;
     const path = "photos/189349/pexels-photo-189349.jpeg";
+    let assetPath: string;
 
-    beforeEach(() => {
-      imageScope = nock("https://images.pexels.com/photos");
+    describe("with successful asset responses", () => {
+      beforeEach(() => {
+        assetPath = resolve(
+          __dirname,
+          "../mocks/pexels/fixtures/image-assets/dog.webp"
+        );
+        server = setupServer(assetResponse(assetPath));
+        server.listen();
+      });
+
+      afterEach(() => {
+        server.close();
+      });
+
+      it("returns the asset as a Base64 string", async () => {
+        const asset = await readFile(assetPath);
+        const result = await fetchImageInBase64({ path });
+
+        expect(result).toEqual(asset.toString("base64"));
+      });
     });
 
-    it("returns the asset as a Base64 string", async () => {
-      const assetPath = resolve(
-        __dirname,
-        "../fixtures/pexels/image-assets/dog.webp"
-      );
-      const asset = await readFile(assetPath);
-      const assetInBase64 = asset.toString("base64");
+    describe("with large asset", () => {
+      beforeEach(() => {
+        assetPath = resolve(
+          __dirname,
+          "../mocks/pexels/fixtures/image-assets/cat.jpeg"
+        );
+        server = setupServer(assetResponse(assetPath));
+        server.listen();
+      });
 
-      imageScope
-        .get("/189349/pexels-photo-189349.jpeg")
-        .replyWithFile(200, assetPath);
+      afterEach(() => {
+        server.close();
+      });
 
-      const result = await fetchImageInBase64({ path });
-
-      expect(result).toEqual(assetInBase64);
-    });
-
-    it("throws an error if the asset is too large", () => {
-      const largeAssetPath = resolve(
-        __dirname,
-        "../fixtures/pexels/image-assets/cat.jpeg"
-      );
-
-      imageScope
-        .get("/189349/pexels-photo-189349.jpeg")
-        .replyWithFile(200, largeAssetPath);
-
-      return expect(fetchImageInBase64({ path })).rejects.toBeTruthy();
-    });
-
-    it.each([201, 404, 500])(
-      "throws an error if the response status code is %s",
-      (statusCode) => {
-        imageScope.get("/189349/pexels-photo-189349.jpeg").reply(statusCode);
-
+      it("throws an error", () => {
         return expect(fetchImageInBase64({ path })).rejects.toBeTruthy();
-      }
-    );
+      });
+    });
+
+    describe.each([201, 401, 500])("with a %s response", (statusCode) => {
+      beforeEach(() => {
+        server = setupServer(errorCodeAsset(statusCode));
+        server.listen();
+      });
+
+      afterEach(() => {
+        server.close();
+      });
+
+      it("throws an error", () => {
+        return expect(fetchImageInBase64({ path })).rejects.toBeTruthy();
+      });
+    });
   });
 });
