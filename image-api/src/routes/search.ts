@@ -27,15 +27,22 @@ const checkImageForExplictContent = async (absolutePexelsPath: string) => {
 };
 
 export const search = ({ query }: { query: string }) => {
+  console.log("starting.search");
   return new Observable<SearchResponse>((subscriber) => {
     pexelsSearch({ query }).then((assets) => {
+      console.log(assets);
       Promise.allSettled(
         assets.photos.map((photo) =>
-          checkImageForExplictContent(photo.src).then((result) => {
-            if (result.isKnownSafe) {
-              subscriber.next({ type: "ASSET", payload: result.payload });
-            }
-          })
+          checkImageForExplictContent(photo.src)
+            .then((result) => {
+              if (result.isKnownSafe) {
+                subscriber.next({ type: "ASSET", payload: result.payload });
+              }
+            })
+            .catch((err) => {
+              console.log(err);
+              throw err;
+            })
         )
       ).then(() => subscriber.complete());
     });

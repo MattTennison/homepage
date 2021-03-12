@@ -3959,6 +3959,14 @@ koa-convert@^1.2.0:
     co "^4.6.0"
     koa-compose "^3.0.0"
 
+koa-easy-ws@^1.3.0:
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/koa-easy-ws/-/koa-easy-ws-1.3.0.tgz#dbf8eeb126ca11eed4c4e3af7904a47c25be2347"
+  integrity sha512-06lHAwm25HBdplTpwHiZqKcl39vS4KiVzRPneUExCHVvQ9TPHmFlUFO/gjQrUdLj3+kvqQpqdlIPNb91wn6EwA==
+  dependencies:
+    debug "^4.1.1"
+    ws "^7.3.1"
+
 koa@^2.13.1:
   version "2.13.1"
   resolved "https://registry.yarnpkg.com/koa/-/koa-2.13.1.tgz#6275172875b27bcfe1d454356a5b6b9f5a9b1051"
@@ -5884,7 +5892,7 @@ write-file-atomic@^3.0.0:
     signal-exit "^3.0.2"
     typedarray-to-buffer "^3.1.5"
 
-ws@^7.2.3, ws@^7.4.4:
+ws@^7.2.3, ws@^7.3.1, ws@^7.4.4:
   version "7.4.4"
   resolved "https://registry.yarnpkg.com/ws/-/ws-7.4.4.tgz#383bc9742cb202292c9077ceab6f6047b17f2d59"
   integrity sha512-Qm8k8ojNQIMx7S+Zp8u/uHOx7Qazv3Yv4q68MiWWWOJhiwG5W3x7iqmRtJo8xxrciZUY4vRxUTJCKuRnF28ZZw==
