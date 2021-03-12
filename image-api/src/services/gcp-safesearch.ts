@@ -2,6 +2,7 @@ import axios from "axios";
 import * as t from "io-ts";
 import { isLeft } from "fp-ts/Either";
 import { config } from "../config";
+import { wrapAxios } from "../logger/logger";
 
 const analyseResponse = t.exact(
   t.type({
@@ -28,6 +29,8 @@ export const analyse = async ({ imageInBase64 }: { imageInBase64: string }) => {
       Authorization: `Bearer ${config.gcp.apiToken}`,
     },
   });
+
+  wrapAxios(client);
 
   const response = await client.post("/images:annotate", {
     requests: [

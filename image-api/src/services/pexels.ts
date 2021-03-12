@@ -2,6 +2,7 @@ import axios from "axios";
 import * as t from "io-ts";
 import { isLeft } from "fp-ts/Either";
 import { config } from "../config";
+import { logger, wrapAxios } from "../logger/logger";
 
 const searchResponse = t.exact(
   t.type({
@@ -19,12 +20,16 @@ const searchResponse = t.exact(
 );
 
 const getClient = () => {
-  return axios.create({
+  const client = axios.create({
     baseURL: "https://api.pexels.com/v1",
     headers: {
       Authorization: config.pexels.apiToken,
     },
   });
+
+  wrapAxios(client);
+
+  return client;
 };
 
 export const search = async ({ query }: { query: string }) => {
@@ -51,6 +56,7 @@ export const fetchImageInBase64 = async ({ path }: { path: string }) => {
     maxContentLength: config.pexels.maxImageSizeInBytes,
     validateStatus: (status) => status === 200,
   });
+  wrapAxios(imageClient);
   const result = await imageClient.get(path, { responseType: "arraybuffer" });
 
   return Buffer.from(result.data, "binary").toString("base64");
