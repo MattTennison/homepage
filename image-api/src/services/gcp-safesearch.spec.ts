@@ -35,11 +35,11 @@ describe("GCP SafeSearch Image Detection", () => {
 
         expect(result).toEqual({
           safeSearch: {
-            adult: "UNLIKELY",
+            adult: "VERY_UNLIKELY",
             spoof: "VERY_UNLIKELY",
             medical: "VERY_UNLIKELY",
-            violence: "LIKELY",
-            racy: "POSSIBLE",
+            violence: "VERY_UNLIKELY",
+            racy: "VERY_UNLIKELY",
           },
         });
       });

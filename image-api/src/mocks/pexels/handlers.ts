@@ -7,7 +7,9 @@ import {
   RestContext,
   RestRequest,
 } from "msw";
+import { resolve } from "path";
 import { URL } from "url";
+import { dogPhoto } from "./fixtures/image-assets/helpers";
 import successfulSearchResponse from "./fixtures/search.json";
 
 const setupSearchResponse = (
@@ -41,7 +43,7 @@ const setupImageResponse = (
   >
 ) => {
   return rest.get(
-    "https://images.pexels.com/photos/:photoId/pexels-photo-*.jpeg",
+    "https://images.pexels.com/photos/:photoId/*",
     responseHandler
   );
 };
@@ -52,8 +54,19 @@ export const assetResponse = (
   setupImageResponse(async (req, res, ctx) => {
     const asset = await readFile(absolutePath);
 
-    return res(ctx.status(200), ctx.body(asset));
+    return res(
+      ctx.status(200),
+      ctx.set("Content-Length", asset.byteLength.toString()),
+      ctx.set("Content-Type", "image/jpeg"),
+      ctx.body(asset)
+    );
   });
+
+export const successfulAssetResponse = setupImageResponse(
+  async (req, res, ctx) => {
+    return res(ctx.status(200), ctx.body(dogPhoto.buffer));
+  }
+);
 
 export const errorCodeAsset = (errorCode: number) =>
   setupImageResponse(async (req, res, ctx) => {

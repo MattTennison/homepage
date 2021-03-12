@@ -16,7 +16,6 @@ jest.mock("../config", () => ({
     pexels: {
       apiToken: "pexels-api-token",
       maxImageSizeInBytes: 10 * 1024,
-      apiBaseUrl: "https://api.pexels.com/v1",
     },
   },
 }));

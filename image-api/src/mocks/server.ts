@@ -1,4 +1,9 @@
 import { setupServer } from "msw/node";
-import { successfulSearch } from "./pexels/handlers";
+import { successfulSafeSearchResponse } from "./gcp/handlers";
+import { successfulAssetResponse, successfulSearch } from "./pexels/handlers";
 
-export const server = setupServer(successfulSearch);
+export const server = setupServer(
+  successfulSearch,
+  successfulSafeSearchResponse,
+  successfulAssetResponse
+);

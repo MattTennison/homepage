@@ -49,3 +49,21 @@ export const errorCodeSafeSearch = (errorCode: number) =>
   makeSafeSearchResponse((req, res, ctx) => {
     return res(ctx.status(errorCode));
   });
+
+export const safeSearchResponse = (overrides: {
+  adult?: string;
+  spoof?: string;
+  medical?: string;
+  violence?: string;
+  racy?: string;
+}) => {
+  const response = clone(successfulSafeSearchFixture);
+  response.responses[0].safeSearchAnnotation = {
+    ...response.responses[0].safeSearchAnnotation,
+    ...overrides,
+  };
+
+  return makeSafeSearchResponse((req, res, ctx) => {
+    return res(ctx.status(200), ctx.json(response));
+  });
+};
