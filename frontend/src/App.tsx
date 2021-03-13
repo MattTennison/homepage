@@ -21,7 +21,7 @@ export const App = () => (
         borderColor="whiteAlpha.600"
         backgroundClip="padding-box"
         centerContent
-        >
+      >
         <Quotes />
       </Container>
     </Box>
