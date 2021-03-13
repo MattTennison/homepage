@@ -4,8 +4,8 @@ on:
     paths:
       - 'image-api/**'
 jobs:
-  test-image-api:
-    name: Image API Unit Tests
+  test:
+    name: Unit Tests
     defaults:
       run:
         working-directory: image-api
@@ -23,8 +23,8 @@ jobs:
 
       - run: yarn test
 
-  lint-image-api:
-    name: Image API Linting
+  lint:
+    name: Linting
     defaults:
       run:
         working-directory: image-api

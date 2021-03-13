@@ -4,8 +4,8 @@ on:
     paths:
       - 'frontend/**'
 jobs:
-  test-frontend:
-    name: Frontend Unit Tests
+  test:
+    name: Unit Tests
     defaults:
       run:
         working-directory: frontend
@@ -23,8 +23,8 @@ jobs:
 
       - run: yarn test
   
-  lint-frontend:
-    name: Frontend Linting
+  lint:
+    name: Linting
     defaults:
       run:
         working-directory: frontend
@@ -42,8 +42,8 @@ jobs:
 
       - run: yarn lint
   
-  build-frontend:
-    name: Frontend build
+  build:
+    name: Build
     defaults:
       run:
         working-directory: frontend
