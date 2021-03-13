@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, ChakraProvider, Container, Skeleton } from "@chakra-ui/react";
+import { Box, ChakraProvider, Container } from "@chakra-ui/react";
 import { Quotes } from "./components/Quotes";
 
 export const App = () => (
