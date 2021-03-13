@@ -22,4 +22,5 @@ services:
     volumes:
       - ./frontend:/app
       - /app/node_modules
+      - /app/build
     command: yarn start:dev
