@@ -2,7 +2,7 @@ name: Frontend Checks
 on:
   push:
     paths:
-      - frontend/**
+      - 'frontend/**'
 jobs:
   test-frontend:
     name: Frontend Unit Tests

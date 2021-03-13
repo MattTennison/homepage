@@ -2,7 +2,7 @@ name: Image API checks
 on:
   push:
     paths:
-      - image-api/**
+      - 'image-api/**'
 jobs:
   test-image-api:
     name: Image API Unit Tests
