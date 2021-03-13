@@ -3,6 +3,7 @@ on:
   push:
     paths:
       - 'image-api/**'
+      - '.github/workflows/image-api.yml'
 jobs:
   test:
     name: Unit Tests
