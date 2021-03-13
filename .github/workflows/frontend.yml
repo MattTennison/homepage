@@ -65,6 +65,4 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: Bundle Size Reports
-          path: |
-            frontend/build/metadata/bundle-size-report.html
-            frontend/build/metadata/stats.json
+          path: frontend/build/metadata
