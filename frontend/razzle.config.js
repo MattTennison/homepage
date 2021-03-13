@@ -24,11 +24,11 @@ module.exports = {
     },
     webpackConfig, // the created webpack config
   }) {
-    if (dev === false && target === 'web') {
-        //note: plan to re-enable once the app is more fleshed out, and can think about lazy loading
-        webpackConfig.performance = {
-            hints: false
-        }
+    if (dev === false && target === "web") {
+      //note: plan to re-enable once the app is more fleshed out, and can think about lazy loading
+      webpackConfig.performance = {
+        hints: false,
+      };
     }
     return webpackConfig;
   },
