@@ -1,19 +1,11 @@
 import React from "react";
-import { Box, ChakraProvider, Container } from "@chakra-ui/react";
+import { ChakraProvider, Container } from "@chakra-ui/react";
 import { Quotes } from "./components/Quotes";
+import { Background } from "./components/Background";
 
 export const App = () => (
   <ChakraProvider>
-    <Box
-      backgroundImage="url(https://images.pexels.com/photos/2527556/pexels-photo-2527556.jpeg)"
-      w="100vw"
-      h="100vh"
-      backgroundSize="cover"
-      backgroundPosition="center"
-      display="flex"
-      alignItems="center"
-      justifyContent="center"
-    >
+    <Background>
       <Container
         backgroundColor="white"
         padding={4}
@@ -24,6 +16,6 @@ export const App = () => (
       >
         <Quotes />
       </Container>
-    </Box>
+    </Background>
   </ChakraProvider>
 );
