@@ -15,13 +15,13 @@ imageapi -> pexels : Search for "ocean" photos
 imageapi <- pexels : Returns up to 15 "ocean" photos
 
 loop "Per image in search response"
-    imageapi -> pexels : Requests image
+    imageapi -> pexels : Requests "large" image (with a height of 650px)
     imageapi <- pexels : Returns image contents
     imageapi -> imageapi : Convert to Base64
     imageapi -> gcpvision : Analyse image with SafeSearch
     alt "Image is safe for work"
     imageapi <- gcpvision : Return "VERY_UNLIKELY" for adult content
-    user <- imageapi : Send photo as binary blob via websocket
+    user <- imageapi : Send photo URL via websocket
     else "Image has explicit content in it"
     imageapi -> imageapi : Discard image
     end

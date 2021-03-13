@@ -6,14 +6,12 @@
 
 ## Considerations/Future Enhancements
 
-### Avoid storing entire images in memory on image-api
+### Serve suitably sized images to client
 
-Google's Vision API recommends you download the asset and convert it to Base64, then send it to them to avoid issues accessing the image. The initial solution will do just that, but there's a risk in keeping images in-memory whilst they're being analysed. Images can get very large (>5MB) and with a sizeable set of results you'd be storing hundreds of MB in memory whilst they're being analysed.
+At the moment we send "large" image URLs to the client - they're compressed and have a height of 650px. That won't look good when stretched to 100% of users screens - a user with a 2560x1440px screen will be doubling the height of the image at least (worse for portrait photos, which'll be blown up further to fill 100% width).
 
-This limitation will prevent increasing the number of results from 15 (Pexel's supports up to 80).
+Options:
 
-Potential Solutions:
-
-- Storing the assets on disk whilst they're being analysed
-- Storing the assets temporarily in S3
-- Sending the image URL to Google Vision instead of Base64 (although this is advised against)
+1. Send the 'original' photo URL from Pexels - easy to do, but those photos often exceed 10MB.
+2. Crop the 'original' photo URL to a suitable size, temporarily store in Cloud Storage and send the URL to that asset to the client. Harder to do, and would incur additional bandwidth costs, but could be a neat solution
+3. See if Pexels can dynamically size images
