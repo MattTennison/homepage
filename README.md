@@ -6,7 +6,7 @@ Homepage is a work in progress "new tab" page, that will allow users to pick dif
 
 ## Technology Stack 🧪
 
-- React frontend
+- React frontend using Razzle
 - Image API written in NodeJS, communicating via websockets
 - Pexels API to serve background photos to fit a mood
 - GCP Vision API to analyse those background photos for work safety
