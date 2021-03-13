@@ -11,9 +11,11 @@ npx create-razzle-app --example with-typescript with-typescript
 cd with-typescript
 yarn start
 ```
+
 <!-- END install generated instructions please keep comment here to allow auto update -->
 
 ## Idea behind the example
+
 This is an of how to use Razzle with [TypeScript](https://github.com/Microsoft/TypeScript).
 
 Basic razzle will uses Babel to transform TypeScript to plain JavaScript ( with babel-loader ), and uses TypeScript for type-checking.
