@@ -1,5 +1,6 @@
 import React from "react";
-import { Box, ChakraProvider, Container } from "@chakra-ui/react";
+import { Box, ChakraProvider, Container, Skeleton } from "@chakra-ui/react";
+import { Quotes } from "./components/Quotes";
 
 export const App = () => (
   <ChakraProvider>
@@ -19,8 +20,9 @@ export const App = () => (
         borderWidth={2}
         borderColor="whiteAlpha.600"
         backgroundClip="padding-box"
-      >
-        Hello World
+        centerContent
+        >
+        <Quotes />
       </Container>
     </Box>
   </ChakraProvider>
