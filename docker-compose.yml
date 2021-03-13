@@ -10,3 +10,16 @@ services:
       - ./image-api:/app
       - /app/node_modules
     command: yarn start:dev
+  web:
+    build:
+      context: ./frontend
+    ports:
+      - 4000:4000
+      # Razzle serves assets on :PORT+1, so you need to expose that port as well
+      - 4001:4001 
+    environment:
+      - PORT=4000
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    command: yarn start:dev
