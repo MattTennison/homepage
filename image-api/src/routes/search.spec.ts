@@ -38,7 +38,7 @@ describe("Search Route", () => {
           toArray()
         )
         .subscribe((result) => {
-          const urls = result.map((response) => response.payload);
+          const urls = result.map((response) => response.payload.assetUrl);
           expect(result).toHaveLength(15);
           expect(urls).toMatchSnapshot();
           done();

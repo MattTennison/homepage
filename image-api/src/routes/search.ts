@@ -4,7 +4,9 @@ import { fetchImageInBase64, search as pexelsSearch } from "../services/pexels";
 
 type SearchResponse = {
   type: "ASSET";
-  payload: string;
+  payload: {
+    assetUrl: string;
+  };
 };
 
 const checkImageForExplictContent = async (absolutePexelsPath: string) => {
@@ -34,7 +36,10 @@ export const search = ({ query }: { query: string }) => {
           checkImageForExplictContent(photo.src)
             .then((result) => {
               if (result.isKnownSafe) {
-                subscriber.next({ type: "ASSET", payload: result.payload });
+                subscriber.next({
+                  type: "ASSET",
+                  payload: { assetUrl: result.payload },
+                });
               }
             })
             .catch((err) => {
