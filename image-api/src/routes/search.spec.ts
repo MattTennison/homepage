@@ -31,18 +31,16 @@ describe("Search Route", () => {
       server.close();
     });
 
-    it("returns images in base64", (done) => {
+    it("returns image URLs", (done) => {
       search({ query: "oceans" })
         .pipe(
           filter((value) => value.type === "ASSET"),
           toArray()
         )
         .subscribe((result) => {
-          const isDogPhotoInBase64 = ({ payload }) =>
-            payload === dogPhoto.base64;
-
+          const urls = result.map((response) => response.payload);
           expect(result).toHaveLength(15);
-          expect(result).toSatisfyAll(isDogPhotoInBase64);
+          expect(urls).toMatchSnapshot();
           done();
         });
     });

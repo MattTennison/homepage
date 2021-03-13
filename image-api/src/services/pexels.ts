@@ -2,7 +2,7 @@ import axios from "axios";
 import * as t from "io-ts";
 import { isLeft } from "fp-ts/Either";
 import { config } from "../config";
-import { logger, wrapAxios } from "../logger/logger";
+import { wrapAxios } from "../logger/logger";
 
 const searchResponse = t.exact(
   t.type({
@@ -12,6 +12,7 @@ const searchResponse = t.exact(
           id: t.number,
           src: t.type({
             original: t.string,
+            large: t.string,
           }),
         })
       )
@@ -45,7 +46,7 @@ export const search = async ({ query }: { query: string }) => {
   return {
     photos: decodedResponse.right.photos.map((photo) => ({
       id: photo.id,
-      src: photo.src.original,
+      src: photo.src.large,
     })),
   };
 };

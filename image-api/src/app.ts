@@ -5,16 +5,15 @@ import { search } from "./routes/search";
 const app = new Koa();
 app.use(websocket());
 app.use(async (ctx, next) => {
-  console.log("i am here");
   if (!ctx.ws) {
     next();
   }
 
   if (ctx.ws) {
-    const ws = await ctx.ws();
+    const ws: WebSocket = await ctx.ws();
     search({ query: "oceans" })
       .subscribe((value) => {
-        ws.send(value);
+        ws.send(JSON.stringify(value));
       })
       .add(() => {
         ws.close();

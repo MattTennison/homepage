@@ -41,7 +41,7 @@ describe("Pexels", () => {
         expect(result.photos[0]).toEqual({
           id: 189349,
           src:
-            "https://images.pexels.com/photos/189349/pexels-photo-189349.jpeg",
+            "https://images.pexels.com/photos/189349/pexels-photo-189349.jpeg?auto=compress&cs=tinysrgb&h=650&w=940",
         });
       });
     });

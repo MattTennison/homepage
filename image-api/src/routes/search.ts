@@ -22,16 +22,14 @@ const checkImageForExplictContent = async (absolutePexelsPath: string) => {
 
   return {
     isKnownSafe,
-    payload: base64,
+    payload: absolutePexelsPath,
   };
 };
 
 export const search = ({ query }: { query: string }) => {
-  console.log("starting.search");
   return new Observable<SearchResponse>((subscriber) => {
     pexelsSearch({ query }).then((assets) => {
-      console.log(assets);
-      Promise.allSettled(
+      return Promise.allSettled(
         assets.photos.map((photo) =>
           checkImageForExplictContent(photo.src)
             .then((result) => {
