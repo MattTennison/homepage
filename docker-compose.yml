@@ -13,6 +13,7 @@ services:
   web:
     build:
       context: ./frontend
+      target: development
     ports:
       - 4000:4000
       # Razzle serves assets on :PORT+1, so you need to expose that port as well
