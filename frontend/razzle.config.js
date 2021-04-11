@@ -1,3 +1,4 @@
+const webpack = require("webpack")
 const { resolve } = require("path");
 
 module.exports = {
@@ -30,6 +31,20 @@ module.exports = {
         hints: false,
       };
     }
+
+    if (dev === false && target === "node") {
+      const idx = webpackConfig.plugins.findIndex(plugin => plugin.constructor.name === 'DefinePlugin');
+      const { definitions } = webpackConfig.plugins[idx];
+      const newDefs = Object.assign({}, definitions);
+      
+      delete newDefs['process.env.PORT'];
+      delete newDefs['process.env.HOST'];
+      delete newDefs['process.env.PUBLIC_PATH'];
+
+      webpackConfig.plugins = [].concat(webpackConfig.plugins);
+      webpackConfig.plugins[idx] = new webpack.DefinePlugin(newDefs)
+    }
+
     return webpackConfig;
-  },
+  }
 };
