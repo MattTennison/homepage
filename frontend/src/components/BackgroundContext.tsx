@@ -82,18 +82,37 @@ export const useUpdateBackgroundImages = () => {
   return context.replaceAssets;
 };
 
+const getRandomElement = (array: Asset[]): Asset | undefined => {
+  if (array.length === 0) {
+    return;
+  }
+
+  const randomIndex = Math.floor(Math.random() * array.length);
+
+  return array[randomIndex];
+};
+
 export const useBackgroundImage = () => {
   const { assets } = useContext(BackgroundContext);
-  const [chosenAsset, setChosenAsset] = useState<Asset>();
+  const [chosenAsset, setChosenAsset] = useState<Asset | undefined>(
+    getRandomElement(assets)
+  );
 
-  useEffect(() => {
-    const randomIndex = Math.floor(Math.random() * assets.length);
-    setChosenAsset(assets[randomIndex]);
+  const refresh = useCallback(() => {
+    setChosenAsset((chosenAsset) => {
+      if (assets.length === 1) {
+        return chosenAsset;
+      }
 
-    return () => {
-      setChosenAsset(undefined);
-    };
+      const otherAssets = assets.filter((a) => a !== chosenAsset);
+      return getRandomElement(otherAssets);
+    });
   }, [assets, setChosenAsset]);
 
-  return chosenAsset;
+  useEffect(() => refresh(), [assets, refresh]);
+
+  return {
+    backgroundImage: chosenAsset,
+    refresh,
+  };
 };
