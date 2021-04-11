@@ -1,6 +1,7 @@
 import React, { useReducer, useEffect } from "react";
-import { Box, Button, VStack } from "@chakra-ui/react";
-import { get, set } from "idb-keyval";
+import { Flex } from "@chakra-ui/react";
+import { SettingsIcon } from "@chakra-ui/icons";
+import { set } from "idb-keyval";
 
 type BackgroundProps = {
   children: React.ReactNode;
@@ -138,7 +139,7 @@ export const Background: React.FC<BackgroundProps> = ({ children }) => {
   };
 
   return (
-    <Box
+    <Flex
       background={
         store.state === "LOADED"
           ? `url(${store.currentAsset.base64})`
@@ -152,10 +153,15 @@ export const Background: React.FC<BackgroundProps> = ({ children }) => {
       alignItems="center"
       justifyContent="center"
     >
-      <VStack>
-        {children}
-        <Button onClick={getNewImage}>New Image Please</Button>
-      </VStack>
-    </Box>
+      {children}
+      <SettingsIcon
+        alignSelf="end"
+        color="whiteAlpha.800"
+        boxSize="2em"
+        padding="4"
+        boxSizing="content-box"
+        _hover={{ color: "whiteAlpha.900" }}
+      />
+    </Flex>
   );
 };
