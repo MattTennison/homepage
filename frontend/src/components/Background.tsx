@@ -18,31 +18,31 @@ type BackgroundReducerUpdateDataAction = {
   assetInBase64: string;
 };
 
+type BackgroundReducerModalActions = {
+  type: "DISPLAY_MODAL" | "CLOSE_MODAL";
+};
+
 type BackgroundReducerAction =
   | BackgroundReducerUpdateUrlAction
-  | BackgroundReducerUpdateDataAction;
+  | BackgroundReducerUpdateDataAction
+  | BackgroundReducerModalActions;
 
 type BackgroundReducerLoadedStore = {
-  state: "LOADED";
   currentAsset: {
+    state: "LOADED";
     url: string;
     base64: string;
   };
 };
 
 type BackgroundReducerLoadingStore = {
-  state: "LOADING";
   currentAsset: {
+    state: "LOADING";
     url: string;
   };
 };
 
-type BackgroundReducerInitialStore = {
-  state: "PENDING";
-};
-
 type BackgroundReducerState =
-  | BackgroundReducerInitialStore
   | BackgroundReducerLoadingStore
   | BackgroundReducerLoadedStore;
 
@@ -70,8 +70,8 @@ export const Background: React.FC<BackgroundProps> = ({ children }) => {
     (state: BackgroundReducerState, action: BackgroundReducerAction) => {
       if (action.type === "UPDATE_URL") {
         const returnValue: BackgroundReducerLoadingStore = {
-          state: "LOADING",
           currentAsset: {
+            state: "LOADING",
             url: action.url,
           },
         };
@@ -80,8 +80,8 @@ export const Background: React.FC<BackgroundProps> = ({ children }) => {
 
       if (action.type === "UPDATE_DATA") {
         const returnValue: BackgroundReducerLoadedStore = {
-          state: "LOADED",
           currentAsset: {
+            state: "LOADED",
             url: action.assetUrl,
             base64: action.assetInBase64,
           },
@@ -91,13 +91,16 @@ export const Background: React.FC<BackgroundProps> = ({ children }) => {
 
       return state;
     },
-    { state: "PENDING" }
+    {
+      currentAsset: {
+        state: "LOADING",
+        url:
+          "https://images.pexels.com/photos/2527556/pexels-photo-2527556.jpeg",
+      },
+    }
   );
 
-  const backgroundImage =
-    store.state === "PENDING"
-      ? "https://images.pexels.com/photos/2527556/pexels-photo-2527556.jpeg"
-      : store.currentAsset.url;
+  const backgroundImage = store.currentAsset.url;
 
   useEffect(() => {
     let isActive = true;
@@ -141,7 +144,7 @@ export const Background: React.FC<BackgroundProps> = ({ children }) => {
   return (
     <Flex
       background={
-        store.state === "LOADED"
+        store.currentAsset.state === "LOADED"
           ? `url(${store.currentAsset.base64})`
           : undefined
       }
