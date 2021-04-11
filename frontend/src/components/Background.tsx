@@ -2,6 +2,7 @@ import React, { useReducer, useEffect } from "react";
 import { Flex } from "@chakra-ui/react";
 import { SettingsIcon } from "@chakra-ui/icons";
 import { set } from "idb-keyval";
+import { BackgroundImageModal } from "./BackgroundImageModal";
 
 type BackgroundProps = {
   children: React.ReactNode;
@@ -39,6 +40,9 @@ type CurrentAssetLoadingState = {
 };
 
 type BackgroundReducerState = {
+  modal: {
+    visible: boolean;
+  };
   currentAsset: CurrentAssetLoadingState | CurrentAssetLoadedState;
 };
 
@@ -66,6 +70,7 @@ export const Background: React.FC<BackgroundProps> = ({ children }) => {
     (state: BackgroundReducerState, action: BackgroundReducerAction) => {
       if (action.type === "UPDATE_URL") {
         return {
+          ...state,
           currentAsset: {
             state: "LOADING" as const,
             url: action.url,
@@ -75,6 +80,7 @@ export const Background: React.FC<BackgroundProps> = ({ children }) => {
 
       if (action.type === "UPDATE_DATA") {
         return {
+          ...state,
           currentAsset: {
             state: "LOADED" as const,
             url: action.assetUrl,
@@ -83,9 +89,26 @@ export const Background: React.FC<BackgroundProps> = ({ children }) => {
         };
       }
 
+      if (action.type === "CLOSE_MODAL") {
+        return {
+          ...state,
+          modal: { visible: false },
+        };
+      }
+
+      if (action.type === "DISPLAY_MODAL") {
+        return {
+          ...state,
+          modal: { visible: true },
+        };
+      }
+
       return state;
     },
     {
+      modal: {
+        visible: true,
+      },
       currentAsset: {
         state: "LOADING",
         url:
@@ -152,12 +175,17 @@ export const Background: React.FC<BackgroundProps> = ({ children }) => {
     >
       {children}
       <SettingsIcon
+        onClick={() => dispatch({ type: "DISPLAY_MODAL" })}
         alignSelf="end"
         color="whiteAlpha.800"
         boxSize="2em"
         padding="4"
         boxSizing="content-box"
         _hover={{ color: "whiteAlpha.900" }}
+      />
+      <BackgroundImageModal
+        isOpen={store.modal.visible}
+        onClose={() => dispatch({ type: "CLOSE_MODAL" })}
       />
     </Flex>
   );
