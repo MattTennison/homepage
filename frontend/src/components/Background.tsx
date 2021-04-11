@@ -1,4 +1,4 @@
-import React, { useReducer, useState } from "react";
+import React, { useState } from "react";
 import { Flex, HStack } from "@chakra-ui/react";
 import { SettingsIcon, RepeatIcon } from "@chakra-ui/icons";
 import { BackgroundImageModal } from "./BackgroundImageModal";
@@ -6,44 +6,6 @@ import { BackgroundProvider, useBackgroundImage } from "./BackgroundContext";
 
 type BackgroundProps = {
   children: React.ReactNode;
-};
-
-type BackgroundReducerUpdateUrlAction = {
-  type: "UPDATE_URL";
-  url: string;
-};
-
-type BackgroundReducerUpdateDataAction = {
-  type: "UPDATE_DATA";
-  assetUrl: string;
-  assetInBase64: string;
-};
-
-type BackgroundReducerModalActions = {
-  type: "DISPLAY_MODAL" | "CLOSE_MODAL";
-};
-
-type BackgroundReducerAction =
-  | BackgroundReducerUpdateUrlAction
-  | BackgroundReducerUpdateDataAction
-  | BackgroundReducerModalActions;
-
-type CurrentAssetLoadedState = {
-  state: "LOADED";
-  url: string;
-  base64: string;
-};
-
-type CurrentAssetLoadingState = {
-  state: "LOADING";
-  url: string;
-};
-
-type BackgroundReducerState = {
-  modal: {
-    visible: boolean;
-  };
-  currentAsset: CurrentAssetLoadingState | CurrentAssetLoadedState;
 };
 
 const BackgroundUI: React.FC<BackgroundProps> = ({ children }) => {
