@@ -1,5 +1,6 @@
 import Koa from "koa";
 import websocket from "koa-easy-ws";
+import { config } from "./config";
 import { search } from "./routes/search";
 
 const app = new Koa();
@@ -25,4 +26,6 @@ app.use((ctx) => {
   ctx.body = "Hello World";
 });
 
-app.listen(3000);
+app.listen(config.port, () => {
+  console.log(`🚀 Listening on :${config.port}`);
+});

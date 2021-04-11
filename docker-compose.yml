@@ -6,6 +6,8 @@ services:
       target: development
     ports:
       - 3000:3000
+    environment:
+      - PORT=3000
     env_file: ./image-api/.env
     volumes:
       - ./image-api:/app

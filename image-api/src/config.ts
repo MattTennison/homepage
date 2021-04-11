@@ -1,8 +1,8 @@
-const getInt = (key) => {
+const getInt = (key: string) => {
   const result = process.env[key];
   try {
-    parseInt(result, 10);
-  } catch {
+    return parseInt(result, 10);
+  } catch (e) {
     return 0;
   }
 };
@@ -16,4 +16,5 @@ export const config = {
   gcp: {
     apiToken: process.env.GCP_API_TOKEN,
   },
+  port: getInt("PORT") || 3000,
 };
