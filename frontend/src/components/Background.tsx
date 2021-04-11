@@ -27,19 +27,19 @@ type BackgroundReducerAction =
   | BackgroundReducerUpdateDataAction
   | BackgroundReducerModalActions;
 
-type BackgroundReducerLoadedStore = {
+type CurrentAssetLoadedState = {
   state: "LOADED";
   url: string;
   base64: string;
 };
 
-type BackgroundReducerLoadingStore = {
+type CurrentAssetLoadingState = {
   state: "LOADING";
   url: string;
 };
 
 type BackgroundReducerState = {
-  currentAsset: BackgroundReducerLoadingStore | BackgroundReducerLoadedStore;
+  currentAsset: CurrentAssetLoadingState | CurrentAssetLoadedState;
 };
 
 const blobToBase64 = (blob: Blob) => {
