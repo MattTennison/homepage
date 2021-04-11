@@ -20,6 +20,7 @@ import {
 } from "@chakra-ui/react";
 import React, { useReducer, useState } from "react";
 import { SearchIcon } from "@chakra-ui/icons";
+import { useUpdateBackgroundImages } from "./BackgroundContext";
 
 type BackgroundImageModalProps = {
   isOpen: boolean;
@@ -96,6 +97,8 @@ export const BackgroundImageModal: React.FC<BackgroundImageModalProps> = ({
     { isLoading: false, images: [] }
   );
 
+  const updateBackgroundImages = useUpdateBackgroundImages();
+
   const searchForImages = (searchTerm: string) => {
     dispatch({ type: "START_LOADING" });
 
@@ -118,6 +121,11 @@ export const BackgroundImageModal: React.FC<BackgroundImageModalProps> = ({
     ws.addEventListener("close", () => {
       dispatch({ type: "STOP_LOADING" });
     });
+  };
+
+  const onSave = () => {
+    updateBackgroundImages(store.images);
+    onClose();
   };
 
   return (
@@ -160,11 +168,15 @@ export const BackgroundImageModal: React.FC<BackgroundImageModalProps> = ({
             </SimpleGrid>
           </VStack>
         </ModalBody>
-        {store.isLoading ? null : (
-          <ModalFooter>
-            <Button colorScheme="teal">Save</Button>
-          </ModalFooter>
-        )}
+        <ModalFooter>
+          <Button
+            colorScheme="teal"
+            onClick={onSave}
+            isDisabled={store.isLoading || store.images.length === 0}
+          >
+            Save
+          </Button>
+        </ModalFooter>
       </ModalContent>
     </Modal>
   );
