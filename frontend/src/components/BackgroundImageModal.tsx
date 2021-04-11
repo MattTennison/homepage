@@ -1,6 +1,5 @@
 import {
-  Box,
-  HStack,
+  Button,
   IconButton,
   Image,
   Input,
@@ -11,10 +10,10 @@ import {
   ModalBody,
   ModalCloseButton,
   ModalContent,
+  ModalFooter,
   ModalHeader,
   ModalOverlay,
   SimpleGrid,
-  Skeleton,
   Spinner,
   Text,
   VStack,
@@ -161,6 +160,11 @@ export const BackgroundImageModal: React.FC<BackgroundImageModalProps> = ({
             </SimpleGrid>
           </VStack>
         </ModalBody>
+        {store.isLoading ? null : (
+          <ModalFooter>
+            <Button colorScheme="teal">Save</Button>
+          </ModalFooter>
+        )}
       </ModalContent>
     </Modal>
   );
