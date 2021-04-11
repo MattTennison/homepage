@@ -28,23 +28,19 @@ type BackgroundReducerAction =
   | BackgroundReducerModalActions;
 
 type BackgroundReducerLoadedStore = {
-  currentAsset: {
-    state: "LOADED";
-    url: string;
-    base64: string;
-  };
+  state: "LOADED";
+  url: string;
+  base64: string;
 };
 
 type BackgroundReducerLoadingStore = {
-  currentAsset: {
-    state: "LOADING";
-    url: string;
-  };
+  state: "LOADING";
+  url: string;
 };
 
-type BackgroundReducerState =
-  | BackgroundReducerLoadingStore
-  | BackgroundReducerLoadedStore;
+type BackgroundReducerState = {
+  currentAsset: BackgroundReducerLoadingStore | BackgroundReducerLoadedStore;
+};
 
 const blobToBase64 = (blob: Blob) => {
   const reader = new FileReader();
@@ -69,24 +65,22 @@ export const Background: React.FC<BackgroundProps> = ({ children }) => {
   const [store, dispatch] = useReducer(
     (state: BackgroundReducerState, action: BackgroundReducerAction) => {
       if (action.type === "UPDATE_URL") {
-        const returnValue: BackgroundReducerLoadingStore = {
+        return {
           currentAsset: {
-            state: "LOADING",
+            state: "LOADING" as const,
             url: action.url,
           },
         };
-        return returnValue;
       }
 
       if (action.type === "UPDATE_DATA") {
-        const returnValue: BackgroundReducerLoadedStore = {
+        return {
           currentAsset: {
-            state: "LOADED",
+            state: "LOADED" as const,
             url: action.assetUrl,
             base64: action.assetInBase64,
           },
         };
-        return returnValue;
       }
 
       return state;
