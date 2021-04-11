@@ -3,6 +3,7 @@ services:
   image-api:
     build:
       context: ./image-api
+      target: development
     ports:
       - 3000:3000
     env_file: ./image-api/.env
